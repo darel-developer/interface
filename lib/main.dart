@@ -1,188 +1,130 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
-import 'verification.dart';
+import 'signup.dart'; // Importez la page SignUpScreen
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignUpScreen(),
+      home: const LanguageSelectionScreen(),
     );
   }
 }
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class LanguageSelectionScreen extends StatefulWidget {
+  const LanguageSelectionScreen({Key? key}) : super(key: key);
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  _LanguageSelectionScreenState createState() =>
+      _LanguageSelectionScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _phoneController = TextEditingController();
-  bool _isButtonEnabled = false;
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
+  String? _selectedLanguage = 'English'; // Langue sélectionnée par défaut
 
-  @override
-  void initState() {
-    super.initState();
-    _phoneController.addListener(_validatePhoneNumber);
-  }
-
-  void _validatePhoneNumber() {
-    final phone = _phoneController.text;
-    setState(() {
-      _isButtonEnabled = phone.length == 9 && RegExp(r'^[0-9]+$').hasMatch(phone);
-    });
-  }
-
-  void showConfirmationDialog() {
-    final phoneNumber = _phoneController.text;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Confirmer le numéro"),
-          content: Text("Est-ce bien votre numéro : $phoneNumber ?"),
-          actions: [
-            TextButton(
-              child: Text("Non"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text("Oui"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => VerificationScreen()),
-                );
-              },
-            ),
-          ],
-        );
-      },
+  void _onContinue() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpScreen()), // Redirection vers SignUpScreen
     );
-  }
-
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFD4E2F9), Color(0xFFFFFFFF)],
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+      backgroundColor: const Color.fromARGB(255, 33, 58, 79), // Couleur de fond bleue
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
+            const Spacer(),
             const Text(
-              'Sign up',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Login with phone number',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEDEDED),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 8),
-                      const Text('+237', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: '690 000 000',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFFEDEDED),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'A code will be sent to your number',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              'Set your language',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isButtonEnabled ? showConfirmationDialog : null,
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                    _isButtonEnabled ? Colors.blue : Colors.grey[300],
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF5E8BB4),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  // Option pour l'anglais
+                  ListTile(
+                    leading: Image.asset(
+                      'assets/images/uk.png', // Chemin vers l'image du drapeau anglais
+                      width: 32,
+                      height: 32,
+                    ),
+                    title: const Text(
+                      'English',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    trailing: _selectedLanguage == 'English'
+                        ? const Icon(Icons.check, color: Colors.white)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        _selectedLanguage = 'English';
+                      });
+                    },
                   ),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  const Divider(color: Colors.white38, height: 1),
+                  // Option pour le français
+                  ListTile(
+                    leading: Image.asset(
+                      'assets/images/fr.png', // Chemin vers l'image du drapeau français
+                      width: 32,
+                      height: 32,
+                    ),
+                    title: const Text(
+                      'Français',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    trailing: _selectedLanguage == 'Français'
+                        ? const Icon(Icons.check, color: Colors.white)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        _selectedLanguage = 'Français';
+                      });
+                    },
                   ),
-                ),
-                child: const Text('Continue', style: TextStyle(color: Colors.white)),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: Text.rich(
-                TextSpan(
-                  text: 'By signing up, you agree to the ',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  children: const [
-                    TextSpan(
-                      text: 'Terms of Service',
-                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                    ),
-                    TextSpan(text: ' and '),
-                    TextSpan(
-                      text: 'Privacy Policy',
-                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                    ),
-                    TextSpan(text: ', including Cookie Use.'),
-                  ],
+            const SizedBox(height: 40),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF365A77), // Couleur du bouton
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                textAlign: TextAlign.center,
+              ),
+              onPressed: _onContinue,
+              child: const Text(
+                'Continue',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            const Spacer(),
           ],
         ),
       ),

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'components/custom_button.dart';
+import 'components/custum_text.dart';
+import 'components/custum_list.dart';
+import 'components/loading.dart'; // Assurez-vous que ce fichier est bien référencé.
 import 'name.dart';
 
 class FormulaireScreen extends StatefulWidget {
@@ -36,34 +40,70 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
     super.dispose();
   }
 
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Empêche la fermeture en cliquant à l'extérieur.
+      builder: (BuildContext context) {
+        return const LoadingIndicator();
+      },
+    );
+  }
+
+  Future<void> _onContinuePressed() async {
+    _showLoadingDialog(); // Affiche le composant de chargement.
+
+    // Simule une opération (par exemple, un appel réseau).
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      Navigator.pop(context); // Ferme le dialogue de chargement.
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NomScreen()),
+      ); // Navigue vers l'écran suivant.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
       body: Container(
+        width: double.infinity,
+        height: 600, 
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFD4E2F9), Color(0xFFFFFFFF)],
+            colors: [
+              Color(0xFFD4E2F9), // Couleur du haut
+              Color(0xFFFFFFFF), // Couleur du bas
+            ],
           ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 16),
+            // Bouton retour personnalisé
+            CircleAvatar(
+              backgroundColor: Colors.transparent, // Couleur du cercle
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
             const Text(
               'Complete your signup',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -71,17 +111,9 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
               style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 8),
-            TextField(
+            CustomTextField(
+              hintText: 'Murielle',
               controller: _nameController,
-              decoration: InputDecoration(
-                hintText: 'Murielle',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: const Color(0xFFEDEDED),
-              ),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -89,38 +121,15 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
               style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEDEDED),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                underline: const SizedBox(),
-                value: _specialty,
-                items: const [
-                  DropdownMenuItem(
-                    value: 'Odontostomatologie',
-                    child: Text('Odontostomatologie'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Cardiologie',
-                    child: Text('Cardiologie'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Dermatologie',
-                    child: Text('Dermatologie'),
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _specialty = value;
-                    _updateButtonState();
-                  });
-                },
-              ),
+            CustomDropdown(
+              value: _specialty,
+              items: const ['Odontostomatologie', 'Cardiologie', 'Dermatologie'],
+              onChanged: (value) {
+                setState(() {
+                  _specialty = value;
+                  _updateButtonState();
+                });
+              },
             ),
             const SizedBox(height: 24),
             const Text(
@@ -133,42 +142,16 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
-            TextField(
+            CustomTextField(
+              hintText: 'Enter your password',
               controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: const Color(0xFFEDEDED),
-              ),
+              isPassword: true,
             ),
             const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isButtonEnabled
-                    ? () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const NomScreen()),
-                  );
-                }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isButtonEnabled ? Colors.blue : Colors.grey[300],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
+            CustomButton(
+              isEnabled: _isButtonEnabled,
+              text: 'Continue',
+              onPressed: _isButtonEnabled ? _onContinuePressed : null,
             ),
             const SizedBox(height: 16),
           ],
