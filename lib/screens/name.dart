@@ -1,8 +1,12 @@
+// ignore_for_file: unused_import, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'profil.dart'; 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
+import 'ProfileDisplayScreen.dart';
+import 'profil.dart';
 
 class NomScreen extends StatefulWidget {
-  const NomScreen({Key? key}) : super(key: key);
+  const NomScreen({super.key});
 
   @override
   _NomScreenState createState() => _NomScreenState();
@@ -32,23 +36,20 @@ class _NomScreenState extends State<NomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFD4E2F9), Color(0xFFFFFFFF)],
+            colors: [
+              Color(0xFFD4E2F9),
+              Color(0xFFFFFFFF),
+            ],
           ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -56,25 +57,39 @@ class _NomScreenState extends State<NomScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            const Text(
-              'What should we call you?',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+            CircleAvatar(
+              backgroundColor: Colors.transparent,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              localizations.whatShouldWeCallYou,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Your @username is unique you can always change it later',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
+            Text(
+              localizations.usernameHint,
+              style: const TextStyle(fontSize: 16, color: Colors.black54),
             ),
             const SizedBox(height: 32),
-            const Text(
-              'Username',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+            Text(
+              localizations.usernameLabel,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
-                hintText: '@murielle',
+                hintText: localizations.usernamePlaceholder,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
@@ -83,7 +98,7 @@ class _NomScreenState extends State<NomScreen> {
                 fillColor: const Color(0xFFEDEDED),
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 66),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -91,24 +106,28 @@ class _NomScreenState extends State<NomScreen> {
                     ? () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ProfilScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => ProfilScreen(
+                              username: _usernameController.text,
+                            ),
+                          ),
                         );
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _isButtonEnabled ? Colors.blue : Colors.grey[300],
+                  backgroundColor:
+                      _isButtonEnabled ? Colors.blue : Colors.grey[300],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                child: Text(
+                  localizations.continueButton,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
           ],
         ),
       ),

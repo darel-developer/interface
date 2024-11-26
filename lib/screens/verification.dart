@@ -1,6 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
 import 'formulaire.dart';
-import 'components/loading.dart'; // Assurez-vous que ce fichier est correctement importé
+import '../components/loading.dart'; 
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({super.key});
@@ -58,6 +61,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -69,8 +74,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFFD4E2F9), // Couleur du haut
-                  Color(0xFFFFFFFF), // Couleur du bas
+                  Color(0xFFD4E2F9), 
+                  Color(0xFFFFFFFF), 
                 ],
               ),
             ),
@@ -79,9 +84,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-                // Bouton retour personnalisé
                 CircleAvatar(
-                  backgroundColor: Colors.transparent, // Couleur du cercle
+                  backgroundColor: Colors.transparent,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
                     onPressed: () {
@@ -90,14 +94,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Verification Code',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+                Text(
+                  localizations.verificationCodeTitle,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Enter the 4-digit code sent to +237 123456789',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                Text(
+                  localizations.verificationCodeSubtitle('+237 123456789'),
+                  style: const TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 const SizedBox(height: 32),
                 Row(
@@ -139,16 +143,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       backgroundColor: _isButtonEnabled ? Colors.blue : Colors.grey.shade300,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('Verify', style: TextStyle(color: Colors.white, fontSize: 18)),
+                    child: Text(localizations.verifyButton, style: const TextStyle(color: Colors.white, fontSize: 18)),
                   ),
                 ),
                 const SizedBox(height: 16),
               ],
             ),
           ),
-          // Affiche le composant de chargement si _isLoading est vrai
-          if (_isLoading)
-            const LoadingIndicator(),
+          if (_isLoading) const LoadingIndicator(),
         ],
       ),
     );

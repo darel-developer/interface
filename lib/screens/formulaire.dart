@@ -1,8 +1,11 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'components/custom_button.dart';
-import 'components/custum_text.dart';
-import 'components/custum_list.dart';
-import 'components/loading.dart'; // Assurez-vous que ce fichier est bien référencé.
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
+import '../components/custom_button.dart';
+import '../components/custum_text.dart';
+import '../components/custum_list.dart';
+import '../components/loading.dart';
 import 'name.dart';
 
 class FormulaireScreen extends StatefulWidget {
@@ -43,7 +46,7 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
   void _showLoadingDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, // Empêche la fermeture en cliquant à l'extérieur.
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return const LoadingIndicator();
       },
@@ -51,33 +54,33 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
   }
 
   Future<void> _onContinuePressed() async {
-    _showLoadingDialog(); // Affiche le composant de chargement.
-
-    // Simule une opération (par exemple, un appel réseau).
+    _showLoadingDialog();
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
-      Navigator.pop(context); // Ferme le dialogue de chargement.
+      Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const NomScreen()),
-      ); // Navigue vers l'écran suivant.
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
-        height: 600, 
+        height: 600,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFD4E2F9), // Couleur du haut
-              Color(0xFFFFFFFF), // Couleur du bas
+              Color(0xFFD4E2F9),
+              Color(0xFFFFFFFF),
             ],
           ),
         ),
@@ -86,9 +89,8 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            // Bouton retour personnalisé
             CircleAvatar(
-              backgroundColor: Colors.transparent, // Couleur du cercle
+              backgroundColor: Colors.transparent,
               child: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () {
@@ -97,33 +99,37 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Complete your signup',
-              style: TextStyle(
+            Text(
+              localizations.completeSignup,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Name',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+            Text(
+              localizations.nameLabel,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 8),
             CustomTextField(
-              hintText: 'Murielle',
+              hintText: localizations.nameHint,
               controller: _nameController,
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Specialty',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+            Text(
+              localizations.specialtyLabel,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 8),
             CustomDropdown(
               value: _specialty,
-              items: const ['Odontostomatologie', 'Cardiologie', 'Dermatologie'],
+              items: [
+                localizations.specialtyOption1,
+                localizations.specialtyOption2,
+                localizations.specialtyOption3
+              ],
               onChanged: (value) {
                 setState(() {
                   _specialty = value;
@@ -132,25 +138,25 @@ class _FormulaireScreenState extends State<FormulaireScreen> {
               },
             ),
             const SizedBox(height: 24),
-            const Text(
-              'You’ll need a password',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+            Text(
+              localizations.passwordLabel,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 4),
             Text(
-              'Make sure it’s 8 characters or more',
+              localizations.passwordHint,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             CustomTextField(
-              hintText: 'Enter your password',
+              hintText: localizations.passwordFieldHint,
               controller: _passwordController,
               isPassword: true,
             ),
             const Spacer(),
             CustomButton(
               isEnabled: _isButtonEnabled,
-              text: 'Continue',
+              text: localizations.continueButton,
               onPressed: _isButtonEnabled ? _onContinuePressed : null,
             ),
             const SizedBox(height: 16),

@@ -1,15 +1,18 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'components/custom_button.dart';
-import 'components/loading.dart'; 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import '../components/custom_button.dart';
 import 'verification.dart'; 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +22,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SignUpScreen(), // L'écran de départ est défini ici.
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), 
+        Locale('fr'), 
+      ],
+      home: const SignUpScreen(),
     );
   }
 }
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -53,38 +65,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _showLoadingDialog() {
+  void _showConfirmationDialog(BuildContext context, String phoneNumber) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const LoadingIndicator(); // Utilisation du composant LoadingIndicator.
+        return ConfirmationDialog(
+          phoneNumber: phoneNumber,
+          onConfirm: () {
+            Navigator.pop(context); // Ferme le dialogue.
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const VerificationScreen()),
+            );
+          },
+        );
       },
-    );
-  }
-
-  void _onContinuePressed() async {
-    _showLoadingDialog();
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (mounted) {
-      Navigator.pop(context); // Ferme la boîte de dialogue.
-    }
-
-    // Redirige vers l'écran de vérification.
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const VerificationScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Chargement des textes localisés
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
-        height: 600, // Taille définie pour le dégradé.
+        height: 600,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -101,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             const SizedBox(height: 16),
             CircleAvatar(
-              backgroundColor: Colors.transparent, // Couleur du cercle
+              backgroundColor: Colors.transparent,
               child: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () {
@@ -110,18 +118,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Sign up',
-              style: TextStyle(
+            Text(
+              localizations.signup,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Login with phone number',
-              style: TextStyle(
+            Text(
+              localizations.loginWithPhoneNumber, 
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
               ),
@@ -159,7 +167,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     controller: _phoneController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      hintText: '690 000 000',
+                      hintText: localizations.phoneNumberHint,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
@@ -174,21 +182,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 50),
             CustomButton(
               isEnabled: _isButtonEnabled,
-              text: 'Continue',
-              onPressed: _isButtonEnabled ? _onContinuePressed : null,
+              text: localizations.continueText, 
+              onPressed: _isButtonEnabled
+                  ? () => _showConfirmationDialog(context, _phoneController.text)
+                  : null,
             ),
             const SizedBox(height: 50),
             Center(
               child: Text.rich(
                 TextSpan(
-                  text: 'By signing up, you agree to the ',
+                  text: localizations.bySigningUpText, 
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
                   ),
                   children: [
                     TextSpan(
-                      text: 'Terms of Service',
+                      text: localizations.termsOfService, 
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black54,
@@ -197,19 +207,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          // Action pour "Terms of Service"
                           print('Terms of Service clicked');
                         },
                     ),
                     const TextSpan(
-                      text: ' and ',
+                      text: ' ' ,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
                       ),
                     ),
                     TextSpan(
-                      text: 'Privacy Policy',
+                      text: localizations.privacyPolicy, 
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black54,
@@ -218,12 +227,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          // Action pour "Privacy Policy"
                           print('Privacy Policy clicked');
                         },
                     ),
                     const TextSpan(
-                      text: ', including Cookie Use.',
+                      text: '.',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -238,6 +246,76 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ConfirmationDialog extends StatelessWidget {
+  final String phoneNumber;
+  final VoidCallback onConfirm;
+
+  const ConfirmationDialog({
+    super.key,
+    required this.phoneNumber,
+    required this.onConfirm,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        localizations.isYourPhoneNumberCorrect, 
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '(+237) $phoneNumber',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            localizations.weWillSendCode, 
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed: onConfirm,
+          child: Text(
+            localizations.confirm, 
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
   }
 }
